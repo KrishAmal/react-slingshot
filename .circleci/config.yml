@@ -21,7 +21,7 @@ jobs:
       - checkout
       - run: npm run test
 
-  analzye:
+  analyze:
     <<: *docker_image
     steps:
       - checkout
