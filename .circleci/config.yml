@@ -1,0 +1,40 @@
+# This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
+version: 2.1
+
+docker_image: &docker_image
+  docker:
+    - image: circleci/node:13.8.0
+
+jobs:
+  build:
+    <<: *docker_image
+    steps:
+      - checkout
+      - run: npm run lint
+  
+  test:
+    <<: *docker_image
+    steps:
+      - checkout
+      - run: npm run test
+
+  analyze:
+    <<: *docker_image
+    steps:
+      - checkout
+      - run: npm audit
+
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  default-ci-pipeline: # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run.
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - analyze:
+          requires:
+            - test
